@@ -13,7 +13,16 @@
       <itunes:name>Cameron</itunes:name>
       <itunes:email>cameron.potts@gmail.com</itunes:email>
     </itunes:owner>
-    <itunes:image href="https://cameronp97.github.io/nutshell-report-feed/cover.png"/>
+    <itunes:image href="https://cameronp97.github.io/nutshell-report-feed/audio/cover.png"/>
     <!-- Episodes get added here, one <item> per episode, newest first -->
+    <item>
+      <title>Welcome to The Nutshell Report</title>
+      <description>A very short hello from Scoop Sterling and Professor Nutshell before the first real episode.</description>
+      <pubDate>Thu, 03 Sep 2026 14:02:46 +0000</pubDate>
+      <guid isPermaLink="false">nutshell-report-welcome-001</guid>
+      <enclosure url="https://cameronp97.github.io/nutshell-report-feed/audio/welcome-episode.mp3" length="52576" type="audio/mpeg"/>
+      <itunes:duration>0:09</itunes:duration>
+      <itunes:explicit>false</itunes:explicit>
+    </item>
   </channel>
 </rss>
