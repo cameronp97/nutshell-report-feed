@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>The Nutshell Report</title>
+    <link>https://cameronp97.github.io/nutshell-report-feed/</link>
+    <atom:link href="https://cameronp97.github.io/nutshell-report-feed/feed.xml" rel="self" type="application/rss+xml"/>
+    <description>Articles and reports, turned into a quick interview-style catch-up. Scoop Sterling asks the questions, Professor Nutshell breaks down what matters.</description>
+    <language>en-us</language>
+    <itunes:explicit>false</itunes:explicit>
+    <itunes:author>Scoop Sterling and Professor Nutshell</itunes:author>
+    <itunes:category text="News"/>
+    <itunes:owner>
+      <itunes:name>Cameron</itunes:name>
+      <itunes:email>cameron.potts@gmail.com</itunes:email>
+    </itunes:owner>
+    <itunes:image href="https://cameronp97.github.io/nutshell-report-feed/cover.png"/>
+    <!-- Episodes get added here, one <item> per episode, newest first -->
+  </channel>
+</rss>
