@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?><rss xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>The Nutshell Report</title>
     <link>https://cameronp97.github.io/nutshell-report-feed/</link>
@@ -14,7 +15,18 @@
     </itunes:owner>
     <itunes:image href="https://cameronp97.github.io/nutshell-report-feed/audio/cover.png"/>
     <!-- Episodes get added here, one <item> per episode, newest first -->
-    <item><title>episode 1 pressure washing llms</title><description>No description provided.</description><pubDate>Thu, 03 Sep 2026 14:55:26 GMT</pubDate><guid isPermaLink="false">6c49b62d-f553-4c2c-8811-8a3d072dd45b</guid><enclosure url="https://cameronp97.github.io/nutshell-report-feed/audio/episode-1788447323440-episode-1-pressure-washing-llms.mp3" length="2806221" type="audio/mpeg"/><itunes:duration>5:51</itunes:duration><itunes:explicit>false</itunes:explicit></item><item><title>welcome episode</title><description>No description provided.</description><pubDate>Thu, 03 Sep 2026 14:55:16 GMT</pubDate><guid isPermaLink="false">26b2a779-c1d7-4c8c-baf1-712d88ed2722</guid><enclosure url="https://cameronp97.github.io/nutshell-report-feed/audio/episode-1788447313004-welcome-episode.mp3" length="52576" type="audio/mpeg"/><itunes:duration>0:09</itunes:duration><itunes:explicit>false</itunes:explicit></item><item>
+    <item>
+      <title>Pressure Washing: Finding Vulnerabilities with LLMs</title>
+      <description>Scoop Sterling and Professor Nutshell break down Teleport's pressure washing experiment: 13 engineers, 3 months, and nearly double the high-severity vulnerabilities found versus the prior two years combined. Why their complex multi-agent harness underperformed simple prompts, the two techniques that actually worked, and why expert-guided AI beat full automation.
+
+Source: https://goteleport.com/blog/finding-vulnerabilities-with-llms/</description>
+      <pubDate>Thu, 03 Sep 2026 14:55:26 GMT</pubDate>
+      <guid isPermaLink="false">6c49b62d-f553-4c2c-8811-8a3d072dd45b</guid>
+      <enclosure url="https://cameronp97.github.io/nutshell-report-feed/audio/episode-1788447323440-episode-1-pressure-washing-llms.mp3" length="2806221" type="audio/mpeg"/>
+      <itunes:duration>5:51</itunes:duration>
+      <itunes:explicit>false</itunes:explicit>
+    </item>
+    <item>
       <title>Welcome to The Nutshell Report</title>
       <description>A very short hello from Scoop Sterling and Professor Nutshell before the first real episode.</description>
       <pubDate>Thu, 03 Sep 2026 14:02:46 +0000</pubDate>
