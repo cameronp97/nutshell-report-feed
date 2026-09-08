@@ -277,14 +277,18 @@
 
   <div class="card">
     <h2><span>Generate episode audio</span></h2>
-    <label for="genTitle">Episode title</label>
-    <input type="text" id="genTitle" placeholder="Episode title">
-    <label for="genDesc">Show notes / description</label>
-    <textarea id="genDesc" placeholder="A short description of what this episode covers."></textarea>
-    <label for="genSourceUrl">Source article URL (optional)</label>
-    <input type="url" id="genSourceUrl" placeholder="https://..." autocapitalize="off" autocorrect="off">
-    <label for="scriptInput">Script (paste what Claude gives you)</label>
-    <textarea id="scriptInput" class="script" placeholder="SCOOP: Hey everyone...&#10;NUTSHELL: And I'm Professor Nutshell..."></textarea>
+    <label for="scriptInput">Paste what Claude gives you</label>
+    <textarea id="scriptInput" class="script" placeholder="TITLE: ...&#10;DESCRIPTION: ...&#10;SOURCE: https://...&#10;---&#10;SCOOP: Hey everyone...&#10;NUTSHELL: And I'm Professor Nutshell..."></textarea>
+    <p class="hint" id="autoFillHint">Paste the whole block Claude gives you — title, description, source, and script all fill in below automatically.</p>
+    <details id="genFieldsDetails">
+      <summary>Title / description / source (auto-filled — tap to check or edit)</summary>
+      <label for="genTitle" style="margin-top:12px;">Episode title</label>
+      <input type="text" id="genTitle" placeholder="Episode title">
+      <label for="genDesc">Show notes / description</label>
+      <textarea id="genDesc" placeholder="A short description of what this episode covers."></textarea>
+      <label for="genSourceUrl">Source article URL (optional)</label>
+      <input type="url" id="genSourceUrl" placeholder="https://..." autocapitalize="off" autocorrect="off">
+    </details>
     <label for="pauseMs">Pause between lines (ms)</label>
     <input type="number" id="pauseMs" value="350" min="0" max="2000" step="50" style="max-width:140px">
     <div style="margin-top:16px;">
@@ -341,6 +345,7 @@
     similarity: $('similarity'), similarityVal: $('similarityVal'),
     genTitle: $('genTitle'), genDesc: $('genDesc'), genSourceUrl: $('genSourceUrl'),
     scriptInput: $('scriptInput'), pauseMs: $('pauseMs'), genBtn: $('genBtn'), genCharCount: $('genCharCount'),
+    autoFillHint: $('autoFillHint'), genFieldsDetails: $('genFieldsDetails'),
     genLog: $('genLog'), genPreview: $('genPreview'),
     dropzone: $('dropzone'), dropzoneText: $('dropzoneText'), audioFile: $('audioFile'),
     fileChip: $('fileChip'), fileName: $('fileName'), fileMeta: $('fileMeta'), clearFile: $('clearFileBtn'),
@@ -772,6 +777,40 @@
   els.scriptInput.addEventListener('input', updateCharCount);
   els.prefixA.addEventListener('input', updateCharCount);
   els.prefixB.addEventListener('input', updateCharCount);
+
+  // ---- one-paste auto-fill: pull TITLE/DESCRIPTION/SOURCE out of a pasted block ----
+  function parseHeaderBlock(text) {
+    const sepMatch = text.match(/\n?-{3,}\n?/);
+    if (!sepMatch) return null;
+    const header = text.slice(0, sepMatch.index);
+    const rest = text.slice(sepMatch.index + sepMatch[0].length);
+    if (!/^\s*TITLE\s*:/im.test(header)) return null; // needs at least a TITLE: line to count as a header block
+    const lines = header.split('\n');
+    let title = '', source = '', desc = [], mode = null;
+    for (const line of lines) {
+      const tM = line.match(/^\s*TITLE\s*:\s*(.*)$/i);
+      const sM = line.match(/^\s*SOURCE\s*:\s*(.*)$/i);
+      const dM = line.match(/^\s*DESCRIPTION\s*:\s*(.*)$/i);
+      if (tM) { title = tM[1].trim(); mode = null; continue; }
+      if (sM) { source = sM[1].trim(); mode = null; continue; }
+      if (dM) { desc.push(dM[1]); mode = 'desc'; continue; }
+      if (mode === 'desc' && line.trim()) desc.push(line.trim());
+    }
+    return { title, source, desc: desc.join(' ').trim(), script: rest.trim() };
+  }
+  els.scriptInput.addEventListener('paste', () => {
+    setTimeout(() => {
+      const parsed = parseHeaderBlock(els.scriptInput.value);
+      if (!parsed) return;
+      if (parsed.title) els.genTitle.value = parsed.title;
+      if (parsed.desc) els.genDesc.value = parsed.desc;
+      if (parsed.source) els.genSourceUrl.value = parsed.source;
+      els.scriptInput.value = parsed.script;
+      updateCharCount();
+      if (els.autoFillHint) { els.autoFillHint.textContent = 'Title, description, and source filled in automatically — check them below if you like.'; }
+    }, 0);
+  });
+
   function updateCharCount() {
     const prefixA = (els.prefixA.value.trim() || 'SCOOP').toUpperCase();
     const prefixB = (els.prefixB.value.trim() || 'NUTSHELL').toUpperCase();
