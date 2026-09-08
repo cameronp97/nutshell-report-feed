@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<rss version="2.0" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" xmlns:atom="http://www.w3.org/2005/Atom">
+<?xml version="1.0" encoding="UTF-8"?><rss xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
   <channel>
     <title>The Nutshell Report</title>
     <link>https://cameronp97.github.io/nutshell-report-feed/</link>
@@ -15,7 +14,7 @@
     </itunes:owner>
     <itunes:image href="https://cameronp97.github.io/nutshell-report-feed/audio/cover.png"/>
     <!-- Episodes get added here, one <item> per episode, newest first -->
-    <item>
+    <item><title>Stanford:  how AI is reshaping the future of work</title><description>From Stanford</description><pubDate>Tue, 08 Sep 2026 00:43:02 GMT</pubDate><guid isPermaLink="false">c013b9e2-264a-444d-8cd9-5ba3a1f24ff8</guid><enclosure url="https://cameronp97.github.io/nutshell-report-feed/audio/episode-1788828179848-stanford-how-ai-is-reshaping-the-future-of-work.mp3" length="5143778" type="audio/mpeg"/><itunes:duration>5:21</itunes:duration><itunes:explicit>false</itunes:explicit></item><item>
       <title>Pressure Washing: Finding Vulnerabilities with LLMs</title>
       <description>Scoop Sterling and Professor Nutshell break down Teleport's pressure washing experiment: 13 engineers, 3 months, and nearly double the high-severity vulnerabilities found versus the prior two years combined. Why their complex multi-agent harness underperformed simple prompts, the two techniques that actually worked, and why expert-guided AI beat full automation.
 
