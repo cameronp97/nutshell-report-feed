@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Nutshell Queue">
-<title>Nutshell Report — Add to Queue</title>
+<meta name="apple-mobile-web-app-title" content="Nutshell Studio">
+<title>Nutshell Report — Studio</title>
 <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%23ff6b4a'/%3E%3Ctext x='50' y='68' font-size='55' text-anchor='middle'%3E%F0%9F%8E%99%EF%B8%8F%3C/text%3E%3C/svg%3E">
 <style>
   :root {
@@ -18,10 +18,12 @@
     --accent: #ff6b4a;
     --accent-ink: #ffffff;
     --teal: #2ec4b6;
+    --purple: #7c5cff;
     --ok: #1a7f4e;
     --ok-bg: #e8f7ef;
     --err: #b3261e;
     --err-bg: #fdecea;
+    --mono: "SF Mono", "Menlo", "Consolas", monospace;
   }
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
   body {
@@ -31,7 +33,7 @@
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
     padding: max(20px, env(safe-area-inset-top)) 18px 60px;
   }
-  .wrap { max-width: 480px; margin: 0 auto; }
+  .wrap { max-width: 520px; margin: 0 auto; }
   header { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
   .logo {
     width: 40px; height: 40px; border-radius: 11px; flex: none;
@@ -59,7 +61,7 @@
   }
   label { display: block; font-size: 13px; font-weight: 600; margin: 12px 0 6px; }
   label:first-of-type { margin-top: 0; }
-  input[type=text], input[type=password], input[type=url] {
+  input[type=text], input[type=password], input[type=url], input[type=number], textarea, select {
     width: 100%;
     padding: 13px 14px;
     border-radius: 10px;
@@ -69,7 +71,9 @@
     color: var(--ink);
     font-family: inherit;
   }
-  input:focus { outline: 2px solid var(--teal); outline-offset: 0; background: #fff; }
+  textarea { resize: vertical; }
+  textarea.script { min-height: 200px; font-family: var(--mono); font-size: 13px; line-height: 1.5; }
+  input:focus, textarea:focus, select:focus { outline: 2px solid var(--teal); outline-offset: 0; background: #fff; }
   .hint { font-size: 12px; color: var(--ink-soft); margin-top: 6px; line-height: 1.4; }
   button {
     font: inherit; font-weight: 600; font-size: 16px;
@@ -78,10 +82,14 @@
   }
   .btn-primary { background: var(--accent); color: var(--accent-ink); }
   .btn-primary:disabled { opacity: 0.45; }
+  .btn-secondary { background: var(--purple); color: #fff; }
+  .btn-secondary:disabled { opacity: 0.45; }
   .btn-ghost { background: transparent; color: var(--ink-soft); border: 1px solid var(--line); }
   .btn-small { width: auto; padding: 8px 12px; font-size: 13px; }
   .field-with-btn { display: flex; gap: 8px; align-items: flex-start; }
   .field-with-btn input { flex: 1; }
+  .btn-row { display: flex; gap: 10px; margin-top: 10px; }
+  .btn-row button { flex: 1; }
   .status-pill {
     display: inline-flex; align-items: center; gap: 6px;
     font-size: 11.5px; font-weight: 600; padding: 4px 10px; border-radius: 999px;
@@ -108,6 +116,52 @@
   .toast.show { display: block; }
   .toast.err { background: var(--err-bg); border-color: #f3c6c2; color: var(--err); }
   details summary { font-size: 12.5px; color: var(--ink-soft); cursor: pointer; margin-top: 4px; }
+  .dropzone {
+    border: 2px dashed var(--line);
+    border-radius: 12px;
+    padding: 24px 16px;
+    text-align: center;
+    color: var(--ink-soft);
+    font-size: 14px;
+    cursor: pointer;
+  }
+  .dropzone strong { color: var(--ink); }
+  .file-chip {
+    display: flex; align-items: center; justify-content: space-between;
+    background: #f0fbfa; border: 1px solid var(--teal);
+    border-radius: 10px; padding: 10px 14px; font-size: 13px; margin-top: 10px;
+  }
+  .file-chip .meta { color: var(--ink-soft); font-size: 12px; }
+  .log {
+    font-family: var(--mono);
+    font-size: 12px;
+    background: #14162a;
+    color: #d9dbee;
+    border-radius: 10px;
+    padding: 14px 16px;
+    max-height: 220px;
+    overflow-y: auto;
+    white-space: pre-wrap;
+    display: none;
+  }
+  .log.show { display: block; margin-top: 16px; }
+  .log .l-ok { color: #7de3b8; }
+  .log .l-err { color: #ff8f85; }
+  .log .l-step { color: #93b8ff; }
+  .success-box {
+    display: none;
+    background: var(--ok-bg); border: 1px solid #b7e3cb; color: var(--ok);
+    border-radius: 10px; padding: 14px 16px; margin-top: 16px; font-size: 13px;
+  }
+  .success-box.show { display: block; }
+  .success-box a { color: var(--ok); font-weight: 600; word-break: break-all; }
+  a { color: var(--teal); }
+  .two-col { display: flex; gap: 14px; flex-wrap: wrap; }
+  .two-col > div { flex: 1; min-width: 140px; }
+  .range-row { display: flex; align-items: center; gap: 10px; margin-top: 6px; }
+  .range-row input[type=range] { flex: 1; width: auto; }
+  .range-row span { font-size: 12px; color: var(--ink-soft); width: 34px; text-align: right; }
+  audio { width: 100%; margin-top: 12px; }
   footer { text-align: center; color: var(--ink-soft); font-size: 11.5px; margin-top: 24px; }
 </style>
 </head>
@@ -117,8 +171,8 @@
   <header>
     <div class="logo">🎙️</div>
     <div>
-      <h1>Add to Nutshell Queue</h1>
-      <p>Paste an article link, tap Add. Claude turns it into an episode later.</p>
+      <h1>Nutshell Studio</h1>
+      <p>Queue links, generate with ElevenLabs, publish — all in one place.</p>
     </div>
   </header>
 
@@ -146,25 +200,133 @@
   <div class="card">
     <details>
       <summary>GitHub connection settings</summary>
-      <label for="ghOwner">Repository owner</label>
-      <input type="text" id="ghOwner" placeholder="cameronp97">
+      <label for="ghOwner" style="margin-top:12px;">Repository owner</label>
+      <input type="text" id="ghOwner" placeholder="cameronp97" autocapitalize="off" autocorrect="off">
       <label for="ghRepo">Repository name</label>
-      <input type="text" id="ghRepo" placeholder="nutshell-report-feed">
+      <input type="text" id="ghRepo" placeholder="nutshell-report-feed" autocapitalize="off" autocorrect="off">
       <label for="ghToken">Personal access token</label>
       <div class="field-with-btn">
-        <input type="password" id="ghToken" placeholder="ghp_...">
+        <input type="password" id="ghToken" placeholder="ghp_..." autocapitalize="off" autocorrect="off">
         <button class="btn-ghost btn-small" id="toggleTokenBtn" type="button">Show</button>
       </div>
-      <p class="hint">Same token as your desktop publisher tool works here — stored only in this browser (this phone), never sent anywhere but GitHub's API. Create one at <a href="https://github.com/settings/tokens/new" target="_blank" rel="noopener">github.com/settings/tokens/new</a> with the <code>repo</code> scope if you need a new one.</p>
+      <p class="hint">Stored only in this browser, never sent anywhere but GitHub's API. Create one at <a href="https://github.com/settings/tokens/new" target="_blank" rel="noopener">github.com/settings/tokens/new</a> (classic token, <code>repo</code> scope).</p>
       <div style="margin-top:12px;">
         <button class="btn-ghost btn-small" id="reconnectBtn" type="button">Save &amp; reconnect</button>
       </div>
     </details>
   </div>
 
+  <div class="card">
+    <details>
+      <summary>ElevenLabs voice settings <span id="elStatus" class="status-pill idle" style="margin-left:6px;">Not connected</span></summary>
+
+      <label for="elKey" style="margin-top:12px;">ElevenLabs API key</label>
+      <div class="field-with-btn">
+        <input type="password" id="elKey" placeholder="sk_..." autocapitalize="off" autocorrect="off">
+        <button class="btn-ghost btn-small" id="toggleElKeyBtn" type="button">Show</button>
+      </div>
+      <p class="hint">Stored only in this browser, never sent anywhere but ElevenLabs's API. Get one at <a href="https://elevenlabs.io/app/settings/api-keys" target="_blank" rel="noopener">elevenlabs.io → profile icon → API Keys</a>.</p>
+      <div class="btn-row">
+        <button class="btn-ghost btn-small" id="testElBtn" type="button">Test API key</button>
+        <button class="btn-ghost btn-small" id="loadVoicesBtn" type="button">Load my voices</button>
+      </div>
+
+      <div class="two-col" style="margin-top:12px;">
+        <div>
+          <label for="prefixA">Host A prefix</label>
+          <input type="text" id="prefixA" placeholder="SCOOP" autocapitalize="off" autocorrect="off">
+          <label for="voiceIdA">Host A voice ID</label>
+          <input type="text" id="voiceIdA" list="voiceListA" placeholder="Voice ID" autocapitalize="off" autocorrect="off">
+          <datalist id="voiceListA"></datalist>
+        </div>
+        <div>
+          <label for="prefixB">Host B prefix</label>
+          <input type="text" id="prefixB" placeholder="NUTSHELL" autocapitalize="off" autocorrect="off">
+          <label for="voiceIdB">Host B voice ID</label>
+          <input type="text" id="voiceIdB" list="voiceListB" placeholder="Voice ID" autocapitalize="off" autocorrect="off">
+          <datalist id="voiceListB"></datalist>
+        </div>
+      </div>
+      <p class="hint">Prefixes must match how Claude labels each line (e.g. "SCOOP:" / "NUTSHELL:") — not case-sensitive. Double-check these are voice IDs, not your API key.</p>
+
+      <label for="ttsModel">Model</label>
+      <select id="ttsModel">
+        <option value="eleven_turbo_v2_5">Turbo v2.5 — fast &amp; economical</option>
+        <option value="eleven_multilingual_v2">Multilingual v2 — highest quality</option>
+        <option value="eleven_flash_v2_5">Flash v2.5 — fastest &amp; cheapest</option>
+      </select>
+
+      <div class="two-col">
+        <div>
+          <label>Stability</label>
+          <div class="range-row">
+            <input type="range" id="stability" min="0" max="1" step="0.05" value="0.5">
+            <span id="stabilityVal">0.50</span>
+          </div>
+        </div>
+        <div>
+          <label>Similarity boost</label>
+          <div class="range-row">
+            <input type="range" id="similarity" min="0" max="1" step="0.05" value="0.75">
+            <span id="similarityVal">0.75</span>
+          </div>
+        </div>
+      </div>
+    </details>
+  </div>
+
+  <div class="card">
+    <h2><span>Generate episode audio</span></h2>
+    <label for="genTitle">Episode title</label>
+    <input type="text" id="genTitle" placeholder="Episode title">
+    <label for="genDesc">Show notes / description</label>
+    <textarea id="genDesc" placeholder="A short description of what this episode covers."></textarea>
+    <label for="genSourceUrl">Source article URL (optional)</label>
+    <input type="url" id="genSourceUrl" placeholder="https://..." autocapitalize="off" autocorrect="off">
+    <label for="scriptInput">Script (paste what Claude gives you)</label>
+    <textarea id="scriptInput" class="script" placeholder="SCOOP: Hey everyone...&#10;NUTSHELL: And I'm Professor Nutshell..."></textarea>
+    <label for="pauseMs">Pause between lines (ms)</label>
+    <input type="number" id="pauseMs" value="350" min="0" max="2000" step="50" style="max-width:140px">
+    <div style="margin-top:16px;">
+      <button class="btn-secondary" id="genBtn" type="button">Generate audio with ElevenLabs</button>
+    </div>
+    <p class="hint" id="genCharCount"></p>
+    <div class="log" id="genLog"></div>
+    <audio id="genPreview" controls style="display:none"></audio>
+  </div>
+
+  <div class="card">
+    <h2><span>Publish</span></h2>
+    <label>Episode audio file</label>
+    <div class="dropzone" id="dropzone">
+      <div id="dropzoneText"><strong>Tap to choose</strong> an .mp3 file</div>
+      <input type="file" id="audioFile" accept="audio/mpeg,audio/mp3,.mp3" style="display:none">
+    </div>
+    <p class="hint">Generated above, or picked directly — title/description/source auto-fill from the file's tags if present.</p>
+    <div id="fileChip" style="display:none" class="file-chip">
+      <div>
+        <div id="fileName" style="font-weight:600"></div>
+        <div class="meta" id="fileMeta"></div>
+      </div>
+      <button class="btn-ghost btn-small" type="button" id="clearFileBtn">Remove</button>
+    </div>
+    <label for="epTitle">Episode title</label>
+    <input type="text" id="epTitle" placeholder="Episode title">
+    <label for="epDesc">Show notes / description</label>
+    <textarea id="epDesc" placeholder="A short description of what this episode covers."></textarea>
+    <label for="epSourceUrl">Source article URL (optional)</label>
+    <input type="url" id="epSourceUrl" placeholder="https://..." autocapitalize="off" autocorrect="off">
+    <div style="margin-top:16px;">
+      <button class="btn-primary" id="publishBtn" type="button" disabled>Publish episode</button>
+    </div>
+    <div class="log" id="log"></div>
+    <div class="success-box" id="successBox"></div>
+  </div>
+
   <footer>Add this page to your Home Screen (Share → Add to Home Screen) for one-tap access. Runs entirely in this browser tab — nothing is sent to Claude.</footer>
 </div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lamejs/1.2.0/lame.min.js"></script>
 <script>
 (function() {
   const $ = (id) => document.getElementById(id);
@@ -172,8 +334,24 @@
     urlInput: $('urlInput'), noteInput: $('noteInput'), addBtn: $('addBtn'), toast: $('toast'),
     itemsList: $('itemsList'), emptyMsg: $('emptyMsg'), pendingCount: $('pendingCount'), loadStatus: $('loadStatus'),
     owner: $('ghOwner'), repo: $('ghRepo'), token: $('ghToken'), toggleToken: $('toggleTokenBtn'), reconnect: $('reconnectBtn'),
+    elKey: $('elKey'), toggleElKey: $('toggleElKeyBtn'), testEl: $('testElBtn'), loadVoices: $('loadVoicesBtn'), elStatus: $('elStatus'),
+    prefixA: $('prefixA'), prefixB: $('prefixB'),
+    voiceIdA: $('voiceIdA'), voiceIdB: $('voiceIdB'), voiceListA: $('voiceListA'), voiceListB: $('voiceListB'),
+    ttsModel: $('ttsModel'), stability: $('stability'), stabilityVal: $('stabilityVal'),
+    similarity: $('similarity'), similarityVal: $('similarityVal'),
+    genTitle: $('genTitle'), genDesc: $('genDesc'), genSourceUrl: $('genSourceUrl'),
+    scriptInput: $('scriptInput'), pauseMs: $('pauseMs'), genBtn: $('genBtn'), genCharCount: $('genCharCount'),
+    genLog: $('genLog'), genPreview: $('genPreview'),
+    dropzone: $('dropzone'), dropzoneText: $('dropzoneText'), audioFile: $('audioFile'),
+    fileChip: $('fileChip'), fileName: $('fileName'), fileMeta: $('fileMeta'), clearFile: $('clearFileBtn'),
+    epTitle: $('epTitle'), epDesc: $('epDesc'), epSourceUrl: $('epSourceUrl'),
+    publishBtn: $('publishBtn'), log: $('log'), successBox: $('successBox'),
   };
 
+  let selectedFile = null;
+  let selectedDurationSec = null;
+
+  // ---- persisted config (kept under the original queue-page key so Cameron's saved token/repo carry over) ----
   const STORE_KEY = 'nutshell_queue_config_v1';
   function loadConfig() {
     try {
@@ -183,23 +361,41 @@
       if (cfg.owner) els.owner.value = cfg.owner;
       if (cfg.repo) els.repo.value = cfg.repo;
       if (cfg.token) els.token.value = cfg.token;
+      if (cfg.elKey) els.elKey.value = cfg.elKey;
+      if (cfg.voiceIdA) els.voiceIdA.value = cfg.voiceIdA;
+      if (cfg.voiceIdB) els.voiceIdB.value = cfg.voiceIdB;
+      if (cfg.prefixA) els.prefixA.value = cfg.prefixA;
+      if (cfg.prefixB) els.prefixB.value = cfg.prefixB;
+      if (cfg.ttsModel) els.ttsModel.value = cfg.ttsModel;
+      if (cfg.stability !== undefined) els.stability.value = cfg.stability;
+      if (cfg.similarity !== undefined) els.similarity.value = cfg.similarity;
     } catch (e) {}
   }
   function saveConfig() {
     try {
       localStorage.setItem(STORE_KEY, JSON.stringify({
         owner: els.owner.value.trim(), repo: els.repo.value.trim(), token: els.token.value.trim(),
+        elKey: els.elKey.value.trim(), voiceIdA: els.voiceIdA.value.trim(), voiceIdB: els.voiceIdB.value.trim(),
+        prefixA: els.prefixA.value.trim(), prefixB: els.prefixB.value.trim(), ttsModel: els.ttsModel.value,
+        stability: els.stability.value, similarity: els.similarity.value,
       }));
     } catch (e) {}
   }
   loadConfig();
   if (!els.owner.value) els.owner.value = 'cameronp97';
   if (!els.repo.value) els.repo.value = 'nutshell-report-feed';
+  if (!els.prefixA.value) els.prefixA.value = 'SCOOP';
+  if (!els.prefixB.value) els.prefixB.value = 'NUTSHELL';
 
   els.toggleToken.addEventListener('click', () => {
     const isPwd = els.token.type === 'password';
     els.token.type = isPwd ? 'text' : 'password';
     els.toggleToken.textContent = isPwd ? 'Hide' : 'Show';
+  });
+  els.toggleElKey.addEventListener('click', () => {
+    const isPwd = els.elKey.type === 'password';
+    els.elKey.type = isPwd ? 'text' : 'password';
+    els.toggleElKey.textContent = isPwd ? 'Hide' : 'Show';
   });
 
   function ghHeaders() {
@@ -207,56 +403,66 @@
   }
   function utf8ToBase64(str) { return btoa(unescape(encodeURIComponent(str))); }
   function base64ToUtf8(b64) { return decodeURIComponent(escape(atob(b64))); }
+  function xmlEscape(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+  function formatBytes(n) { return n < 1024*1024 ? Math.round(n/1024) + ' KB' : (n/1024/1024).toFixed(1) + ' MB'; }
+  function formatDuration(sec) { const m = Math.floor(sec/60), s = sec%60; return m + ':' + String(s).padStart(2,'0'); }
+  function slugify(s) { return s.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 60) || 'episode'; }
+  function rfc822822Now() { return new Date().toUTCString(); }
 
-  function setLoadStatus(kind, text) {
-    els.loadStatus.className = 'status-pill ' + kind;
-    els.loadStatus.textContent = text;
-  }
-  function showToast(msg, isErr) {
-    els.toast.textContent = msg;
-    els.toast.className = 'toast show' + (isErr ? ' err' : '');
-    setTimeout(() => { els.toast.classList.remove('show'); }, 4000);
-  }
-  function updateAddEnabled() {
-    els.addBtn.disabled = !(els.urlInput.value.trim() && els.token.value.trim());
-  }
-  els.urlInput.addEventListener('input', updateAddEnabled);
-
-  async function ghGetQueue() {
+  // ---- generic GitHub Contents API helpers, reused by queue + publish ----
+  async function ghGetFile(path) {
     const owner = els.owner.value.trim(), repo = els.repo.value.trim();
-    const res = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/queue.json`, { headers: ghHeaders() });
-    if (res.status === 404) return { items: [], sha: null };
-    if (!res.ok) throw new Error(`GET queue.json failed: ${res.status}`);
-    const body = await res.json();
-    let parsed;
-    try { parsed = JSON.parse(base64ToUtf8(body.content.replace(/\n/g, ''))); }
-    catch (e) { parsed = { items: [] }; }
-    if (!Array.isArray(parsed.items)) parsed.items = [];
-    return { items: parsed.items, sha: body.sha };
+    const res = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${encodeURIComponent(path)}`, { headers: ghHeaders() });
+    if (res.status === 404) return null;
+    if (!res.ok) throw new Error(`GET ${path} failed: ${res.status}`);
+    return res.json();
   }
-
-  async function ghPutQueue(items, sha, message) {
+  async function ghPutFile(path, base64Content, message, sha) {
     const owner = els.owner.value.trim(), repo = els.repo.value.trim();
-    const body = { message, content: utf8ToBase64(JSON.stringify({ items }, null, 2)), branch: 'main' };
+    const body = { message, content: base64Content, branch: 'main' };
     if (sha) body.sha = sha;
-    const res = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/queue.json`, {
+    const res = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${encodeURIComponent(path)}`, {
       method: 'PUT',
       headers: Object.assign({ 'Content-Type': 'application/json' }, ghHeaders()),
       body: JSON.stringify(body),
     });
     if (!res.ok) {
       const errText = await res.text();
-      throw new Error(`PUT queue.json failed: ${res.status} ${errText.slice(0,200)}`);
+      throw new Error(`PUT ${path} failed: ${res.status} ${errText.slice(0,200)}`);
     }
     return res.json();
   }
 
+  // ================= QUEUE =================
+  function setLoadStatus(kind, text) { els.loadStatus.className = 'status-pill ' + kind; els.loadStatus.textContent = text; }
+  function showToast(msg, isErr) {
+    els.toast.textContent = msg;
+    els.toast.className = 'toast show' + (isErr ? ' err' : '');
+    setTimeout(() => { els.toast.classList.remove('show'); }, 4000);
+  }
+  function updateAddEnabled() { els.addBtn.disabled = !(els.urlInput.value.trim() && els.token.value.trim()); }
+  els.urlInput.addEventListener('input', updateAddEnabled);
+
+  function escapeHtml(s) { return String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
   function formatWhen(iso) {
     try {
       const d = new Date(iso);
       return d.toLocaleDateString(undefined, { month: 'short', day: 'numeric' }) + ' · ' +
              d.toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' });
     } catch (e) { return iso; }
+  }
+
+  async function ghGetQueue() {
+    const file = await ghGetFile('queue.json');
+    if (!file) return { items: [], sha: null };
+    let parsed;
+    try { parsed = JSON.parse(base64ToUtf8(file.content.replace(/\n/g, ''))); }
+    catch (e) { parsed = { items: [] }; }
+    if (!Array.isArray(parsed.items)) parsed.items = [];
+    return { items: parsed.items, sha: file.sha };
+  }
+  async function ghPutQueue(items, sha, message) {
+    return ghPutFile('queue.json', utf8ToBase64(JSON.stringify({ items }, null, 2)), message, sha);
   }
 
   function renderItems(items) {
@@ -272,25 +478,19 @@
         ${noteHtml}
         <div class="meta">Added ${formatWhen(item.addedAt)}</div>
         <div class="row">
-          <a href="${escapeAttr(item.url)}" target="_blank" rel="noopener" style="font-size:12.5px">Open link</a>
-          <button class="btn-ghost btn-small" data-id="${escapeAttr(item.id)}" type="button">Remove</button>
+          <a href="${escapeHtml(item.url)}" target="_blank" rel="noopener" style="font-size:12.5px">Open link</a>
+          <button class="btn-ghost btn-small" data-id="${escapeHtml(item.id)}" type="button">Remove</button>
         </div>`;
       div.querySelector('button[data-id]').addEventListener('click', () => removeItem(item.id));
       els.itemsList.appendChild(div);
     });
   }
 
-  function escapeHtml(s) { return String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
-  function escapeAttr(s) { return escapeHtml(s); }
-
-  let cachedSha = null;
-
   async function refreshQueue() {
     if (!els.token.value.trim()) { setLoadStatus('err', 'No token set'); return; }
     setLoadStatus('idle', 'Loading…');
     try {
-      const { items, sha } = await ghGetQueue();
-      cachedSha = sha;
+      const { items } = await ghGetQueue();
       renderItems(items);
       setLoadStatus('ok', 'Up to date');
     } catch (e) {
@@ -310,8 +510,7 @@
       const id = (self.crypto && crypto.randomUUID) ? crypto.randomUUID() : String(Date.now());
       items.push({ id, url, note, addedAt: new Date().toISOString() });
       await ghPutQueue(items, sha, `Queue: add ${url}`);
-      els.urlInput.value = '';
-      els.noteInput.value = '';
+      els.urlInput.value = ''; els.noteInput.value = '';
       showToast('Added to queue.');
       await refreshQueue();
     } catch (e) {
@@ -337,9 +536,443 @@
 
   els.reconnect.addEventListener('click', () => { saveConfig(); refreshQueue(); updateAddEnabled(); });
 
+  // ================= ELEVENLABS CONFIG =================
+  function setElStatus(kind, text) { els.elStatus.className = 'status-pill ' + kind; els.elStatus.textContent = text; }
+
+  els.stability.addEventListener('input', () => { els.stabilityVal.textContent = parseFloat(els.stability.value).toFixed(2); });
+  els.similarity.addEventListener('input', () => { els.similarityVal.textContent = parseFloat(els.similarity.value).toFixed(2); });
+  els.stabilityVal.textContent = parseFloat(els.stability.value).toFixed(2);
+  els.similarityVal.textContent = parseFloat(els.similarity.value).toFixed(2);
+
+  async function testElevenLabs() {
+    saveConfig();
+    const key = els.elKey.value.trim();
+    if (!key) { setElStatus('err', 'Missing API key'); return; }
+    setElStatus('idle', 'Checking...');
+    try {
+      const res = await fetch('https://api.elevenlabs.io/v1/user', { headers: { 'xi-api-key': key } });
+      if (res.status === 401) { setElStatus('err', 'Bad/scoped key (401)'); return; }
+      if (!res.ok) { setElStatus('err', 'Error ' + res.status); return; }
+      const data = await res.json();
+      const sub = data.subscription || {};
+      setElStatus('ok', sub.character_limit ? `Connected — ${sub.character_count.toLocaleString()}/${sub.character_limit.toLocaleString()} chars` : 'Connected');
+    } catch (e) {
+      setElStatus('err', 'Network error: ' + e.message);
+    }
+  }
+  els.testEl.addEventListener('click', testElevenLabs);
+
+  async function loadVoiceLibrary() {
+    saveConfig();
+    const key = els.elKey.value.trim();
+    if (!key) { setElStatus('err', 'Enter your API key first'); return; }
+    setElStatus('idle', 'Loading voices...');
+    try {
+      const res = await fetch('https://api.elevenlabs.io/v1/voices', { headers: { 'xi-api-key': key } });
+      if (!res.ok) { setElStatus('err', 'Error ' + res.status); return; }
+      const data = await res.json();
+      const voices = data.voices || [];
+      els.voiceListA.innerHTML = ''; els.voiceListB.innerHTML = '';
+      voices.forEach(v => {
+        const optA = document.createElement('option');
+        optA.value = v.voice_id; optA.label = v.name; optA.textContent = v.name;
+        els.voiceListA.appendChild(optA);
+        els.voiceListB.appendChild(optA.cloneNode(true));
+      });
+      setElStatus('ok', `Loaded ${voices.length} voices`);
+    } catch (e) {
+      setElStatus('err', 'Network error: ' + e.message);
+    }
+  }
+  els.loadVoices.addEventListener('click', loadVoiceLibrary);
+
+  // ================= ID3 read/write =================
+  function id3FindTerminator(bytes, start, wide) {
+    if (wide) { for (let i = start; i + 1 < bytes.length; i += 2) if (bytes[i] === 0 && bytes[i+1] === 0) return i; return bytes.length; }
+    for (let i = start; i < bytes.length; i++) if (bytes[i] === 0) return i;
+    return bytes.length;
+  }
+  function id3DecodeText(bytes, encoding) {
+    if (encoding === 1) {
+      let le = true, start = 0;
+      if (bytes.length >= 2) { if (bytes[0] === 0xFF && bytes[1] === 0xFE) { le = true; start = 2; } else if (bytes[0] === 0xFE && bytes[1] === 0xFF) { le = false; start = 2; } }
+      const units = [];
+      for (let i = start; i + 1 < bytes.length; i += 2) units.push(le ? (bytes[i] | (bytes[i+1] << 8)) : ((bytes[i] << 8) | bytes[i+1]));
+      return String.fromCharCode.apply(null, units).replace(/\0+$/, '');
+    }
+    if (encoding === 2) {
+      const units = [];
+      for (let i = 0; i + 1 < bytes.length; i += 2) units.push((bytes[i] << 8) | bytes[i+1]);
+      return String.fromCharCode.apply(null, units).replace(/\0+$/, '');
+    }
+    if (encoding === 3) return new TextDecoder('utf-8').decode(bytes).replace(/\0+$/, '');
+    let s = ''; for (let i = 0; i < bytes.length; i++) s += String.fromCharCode(bytes[i]);
+    return s.replace(/\0+$/, '');
+  }
+  function parseID3(arrayBuffer) {
+    const bytes = new Uint8Array(arrayBuffer);
+    if (bytes.length < 10 || bytes[0] !== 0x49 || bytes[1] !== 0x44 || bytes[2] !== 0x33) return null;
+    const version = bytes[3];
+    const tagSize = ((bytes[6]&0x7f)<<21)|((bytes[7]&0x7f)<<14)|((bytes[8]&0x7f)<<7)|(bytes[9]&0x7f);
+    let offset = 10;
+    const end = Math.min(10 + tagSize, bytes.length);
+    const result = { txxx: {} };
+    while (offset + 10 <= end) {
+      const frameId = String.fromCharCode(bytes[offset], bytes[offset+1], bytes[offset+2], bytes[offset+3]);
+      if (frameId === '\0\0\0\0') break;
+      let frameSize;
+      if (version >= 4) frameSize = ((bytes[offset+4]&0x7f)<<21)|((bytes[offset+5]&0x7f)<<14)|((bytes[offset+6]&0x7f)<<7)|(bytes[offset+7]&0x7f);
+      else frameSize = ((bytes[offset+4]<<24)|(bytes[offset+5]<<16)|(bytes[offset+6]<<8)|bytes[offset+7]) >>> 0;
+      const dataStart = offset + 10;
+      if (dataStart + frameSize > bytes.length || frameSize < 0) break;
+      const frameData = bytes.slice(dataStart, dataStart + frameSize);
+      if (frameId === 'TIT2' && frameData.length > 1) result.title = id3DecodeText(frameData.slice(1), frameData[0]);
+      else if (frameId === 'COMM' && frameData.length > 4) {
+        const enc = frameData[0], wide = (enc === 1 || enc === 2);
+        const termIdx = id3FindTerminator(frameData, 4, wide);
+        result.comment = id3DecodeText(frameData.slice(termIdx + (wide ? 2 : 1)), enc);
+      } else if (frameId === 'TXXX' && frameData.length > 1) {
+        const enc = frameData[0], wide = (enc === 1 || enc === 2);
+        const termIdx = id3FindTerminator(frameData, 1, wide);
+        const descName = id3DecodeText(frameData.slice(1, termIdx), enc).toLowerCase();
+        result.txxx[descName] = id3DecodeText(frameData.slice(termIdx + (wide ? 2 : 1)), enc);
+      }
+      offset = dataStart + frameSize;
+    }
+    return result;
+  }
+  function id3BuildFrame(id, dataBytes) {
+    const header = new Uint8Array(10);
+    header.set(new TextEncoder().encode(id), 0);
+    const size = dataBytes.length;
+    header[4] = (size >>> 24) & 0xff; header[5] = (size >>> 16) & 0xff; header[6] = (size >>> 8) & 0xff; header[7] = size & 0xff;
+    header[8] = 0; header[9] = 0;
+    const frame = new Uint8Array(10 + dataBytes.length);
+    frame.set(header, 0); frame.set(dataBytes, 10);
+    return frame;
+  }
+  function id3TextFrame(id, text) {
+    const textBytes = new TextEncoder().encode(text || '');
+    const data = new Uint8Array(1 + textBytes.length);
+    data[0] = 3; data.set(textBytes, 1);
+    return id3BuildFrame(id, data);
+  }
+  function id3CommFrame(text) {
+    const langBytes = new TextEncoder().encode('eng');
+    const textBytes = new TextEncoder().encode(text || '');
+    const data = new Uint8Array(1 + 3 + 1 + textBytes.length);
+    data[0] = 3; data.set(langBytes, 1); data[4] = 0; data.set(textBytes, 5);
+    return id3BuildFrame('COMM', data);
+  }
+  function id3TxxxFrame(desc, text) {
+    const descBytes = new TextEncoder().encode(desc);
+    const textBytes = new TextEncoder().encode(text || '');
+    const data = new Uint8Array(1 + descBytes.length + 1 + textBytes.length);
+    data[0] = 3; data.set(descBytes, 1); data[1 + descBytes.length] = 0; data.set(textBytes, 1 + descBytes.length + 1);
+    return id3BuildFrame('TXXX', data);
+  }
+  function buildID3Tag(title, comment, sourceUrl) {
+    const frames = [id3TextFrame('TIT2', title)];
+    if (comment) frames.push(id3CommFrame(comment));
+    if (sourceUrl) frames.push(id3TxxxFrame('source_url', sourceUrl));
+    let totalLen = 0; frames.forEach(f => totalLen += f.length);
+    const header = new Uint8Array(10);
+    header.set([0x49, 0x44, 0x33], 0); header[3] = 3; header[4] = 0; header[5] = 0;
+    header[6] = (totalLen >>> 21) & 0x7f; header[7] = (totalLen >>> 14) & 0x7f; header[8] = (totalLen >>> 7) & 0x7f; header[9] = totalLen & 0x7f;
+    const tag = new Uint8Array(10 + totalLen);
+    tag.set(header, 0);
+    let offset = 10;
+    frames.forEach(f => { tag.set(f, offset); offset += f.length; });
+    return tag;
+  }
+
+  // ================= FILE / PUBLISH =================
+  els.dropzone.addEventListener('click', () => els.audioFile.click());
+  els.audioFile.addEventListener('change', () => { if (els.audioFile.files[0]) handleFile(els.audioFile.files[0]); });
+  els.clearFile.addEventListener('click', () => {
+    selectedFile = null; selectedDurationSec = null;
+    els.fileChip.style.display = 'none'; els.dropzone.style.display = 'block';
+    els.audioFile.value = ''; updatePublishEnabled();
+  });
+
+  async function handleFile(file) {
+    selectedFile = file;
+    els.fileName.textContent = file.name;
+    els.fileMeta.textContent = 'reading duration...';
+    els.fileChip.style.display = 'flex';
+    els.dropzone.style.display = 'none';
+
+    const url = URL.createObjectURL(file);
+    await new Promise((resolve) => {
+      const audio = new Audio();
+      audio.preload = 'metadata';
+      audio.addEventListener('loadedmetadata', () => {
+        selectedDurationSec = Math.round(audio.duration);
+        els.fileMeta.textContent = formatBytes(file.size) + ' · ' + formatDuration(selectedDurationSec);
+        URL.revokeObjectURL(url); updatePublishEnabled(); resolve();
+      });
+      audio.addEventListener('error', () => { els.fileMeta.textContent = formatBytes(file.size) + ' · duration unknown'; updatePublishEnabled(); resolve(); });
+      audio.src = url;
+    });
+
+    let id3 = null;
+    try { id3 = parseID3(await file.arrayBuffer()); } catch (e) {}
+    if (id3 && id3.title) els.epTitle.value = id3.title;
+    else if (!els.epTitle.value) els.epTitle.value = file.name.replace(/\.[^.]+$/, '').replace(/[-_]+/g, ' ');
+    if (id3 && id3.comment) els.epDesc.value = id3.comment;
+    const src = id3 && (id3.txxx['source_url'] || id3.txxx['source url'] || id3.txxx['source']);
+    if (src) els.epSourceUrl.value = src;
+    updatePublishEnabled();
+  }
+  function updatePublishEnabled() { els.publishBtn.disabled = !(selectedFile && els.epTitle.value.trim()); }
+  els.epTitle.addEventListener('input', updatePublishEnabled);
+
+  function log(msg, kind) {
+    els.log.classList.add('show');
+    const line = document.createElement('div');
+    if (kind) line.className = 'l-' + kind;
+    line.textContent = msg;
+    els.log.appendChild(line); els.log.scrollTop = els.log.scrollHeight;
+  }
+  function genLog(msg, kind) {
+    els.genLog.classList.add('show');
+    const line = document.createElement('div');
+    if (kind) line.className = 'l-' + kind;
+    line.textContent = msg;
+    els.genLog.appendChild(line); els.genLog.scrollTop = els.genLog.scrollHeight;
+  }
+
+  function fileToBase64(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result.split(',')[1]);
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  }
+
+  // ================= ELEVENLABS GENERATION =================
+  function escapeRe(s) { return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
+  function floatTo16BitPCM(float32) {
+    const out = new Int16Array(float32.length);
+    for (let i = 0; i < float32.length; i++) { let s = Math.max(-1, Math.min(1, float32[i])); out[i] = s < 0 ? s * 0x8000 : s * 0x7fff; }
+    return out;
+  }
+  function parseScript(scriptText, prefixA, prefixB) {
+    const lines = scriptText.split('\n').map(l => l.trim()).filter(Boolean);
+    const re = new RegExp('^(' + escapeRe(prefixA) + '|' + escapeRe(prefixB) + ')\\s*:\\s*(.+)$', 'i');
+    const turns = [];
+    for (const line of lines) {
+      const m = line.match(re);
+      if (!m) continue;
+      turns.push({ speaker: m[1].toUpperCase() === prefixA ? 'A' : 'B', text: m[2].trim() });
+    }
+    return { turns };
+  }
+  els.scriptInput.addEventListener('input', updateCharCount);
+  els.prefixA.addEventListener('input', updateCharCount);
+  els.prefixB.addEventListener('input', updateCharCount);
+  function updateCharCount() {
+    const prefixA = (els.prefixA.value.trim() || 'SCOOP').toUpperCase();
+    const prefixB = (els.prefixB.value.trim() || 'NUTSHELL').toUpperCase();
+    const { turns } = parseScript(els.scriptInput.value, prefixA, prefixB);
+    const chars = turns.reduce((n, t) => n + t.text.length, 0);
+    els.genCharCount.textContent = turns.length ? `${turns.length} lines · ${chars.toLocaleString()} characters` : '';
+  }
+
+  async function generateAudio() {
+    saveConfig();
+    const key = els.elKey.value.trim();
+    const voiceA = els.voiceIdA.value.trim(), voiceB = els.voiceIdB.value.trim();
+    const prefixA = (els.prefixA.value.trim() || 'SCOOP').toUpperCase();
+    const prefixB = (els.prefixB.value.trim() || 'NUTSHELL').toUpperCase();
+    const model = els.ttsModel.value;
+    const stability = parseFloat(els.stability.value), similarity = parseFloat(els.similarity.value);
+    const pauseMs = parseInt(els.pauseMs.value, 10) || 0;
+
+    els.genLog.innerHTML = ''; els.genLog.classList.remove('show');
+    els.genPreview.style.display = 'none';
+
+    if (!key) { genLog('Missing ElevenLabs API key.', 'err'); els.genLog.classList.add('show'); return; }
+    if (!voiceA || !voiceB) { genLog('Set both voice IDs first (or use Load my voices).', 'err'); els.genLog.classList.add('show'); return; }
+    if (typeof lamejs === 'undefined') { genLog('The mp3 encoder library failed to load — check your connection and reload.', 'err'); els.genLog.classList.add('show'); return; }
+
+    const { turns } = parseScript(els.scriptInput.value, prefixA, prefixB);
+    if (!turns.length) { genLog(`No recognizable lines found. Each line must start with "${prefixA}:" or "${prefixB}:".`, 'err'); els.genLog.classList.add('show'); return; }
+
+    els.genBtn.disabled = true;
+    genLog(`Found ${turns.length} lines. Starting synthesis with ${model}...`, 'step');
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const decoded = [];
+    let totalChars = 0;
+
+    try {
+      for (let i = 0; i < turns.length; i++) {
+        const t = turns[i];
+        const voiceId = t.speaker === 'A' ? voiceA : voiceB;
+        totalChars += t.text.length;
+        genLog(`Line ${i+1}/${turns.length} (${t.speaker === 'A' ? prefixA : prefixB}, ${t.text.length} chars)...`);
+        const res = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${voiceId}?output_format=mp3_44100_128`, {
+          method: 'POST',
+          headers: { 'xi-api-key': key, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ text: t.text, model_id: model, voice_settings: { stability, similarity_boost: similarity } }),
+        });
+        if (!res.ok) { const errText = await res.text(); throw new Error(`Line ${i+1} failed (${res.status}): ${errText.slice(0,200)}`); }
+        const buf = await res.arrayBuffer();
+        decoded.push(await audioCtx.decodeAudioData(buf.slice(0)));
+      }
+      genLog(`All ${turns.length} lines synthesized (${totalChars.toLocaleString()} characters total).`, 'ok');
+      genLog('Mixing down and encoding to mp3...', 'step');
+
+      const sampleRate = audioCtx.sampleRate;
+      const pauseSamples = Math.round(sampleRate * (pauseMs / 1000));
+      let totalSamples = 0;
+      decoded.forEach(b => totalSamples += b.length);
+      totalSamples += pauseSamples * Math.max(0, decoded.length - 1);
+      const merged = new Float32Array(totalSamples);
+      let pos = 0;
+      decoded.forEach((b, idx) => {
+        if (b.numberOfChannels === 1) merged.set(b.getChannelData(0), pos);
+        else {
+          const l = b.getChannelData(0), r = b.getChannelData(1), len = b.length;
+          const mono = new Float32Array(len);
+          for (let i = 0; i < len; i++) mono[i] = (l[i] + r[i]) / 2;
+          merged.set(mono, pos);
+        }
+        pos += b.length;
+        if (idx < decoded.length - 1) pos += pauseSamples;
+      });
+
+      const pcm16 = floatTo16BitPCM(merged);
+      const encoder = new lamejs.Mp3Encoder(1, sampleRate, 128);
+      const blockSize = 1152;
+      const mp3Chunks = [];
+      for (let i = 0; i < pcm16.length; i += blockSize) {
+        const enc = encoder.encodeBuffer(pcm16.subarray(i, i + blockSize));
+        if (enc.length > 0) mp3Chunks.push(enc);
+      }
+      const endBuf = encoder.flush();
+      if (endBuf.length > 0) mp3Chunks.push(endBuf);
+
+      const title = els.genTitle.value.trim() || 'Untitled Episode';
+      const desc = els.genDesc.value.trim();
+      const src = els.genSourceUrl.value.trim();
+      const id3Tag = buildID3Tag(title, desc, src);
+      const finalBlob = new Blob([id3Tag, ...mp3Chunks], { type: 'audio/mpeg' });
+      genLog(`Encoded ${formatBytes(finalBlob.size)} mp3, ~${formatDuration(Math.round(totalSamples / sampleRate))}.`, 'ok');
+
+      els.genPreview.src = URL.createObjectURL(finalBlob);
+      els.genPreview.style.display = 'block';
+
+      const filename = 'episode-' + Date.now() + '-' + slugify(title) + '.mp3';
+      await handleFile(new File([finalBlob], filename, { type: 'audio/mpeg' }));
+      genLog('Loaded into Publish below — review and tap Publish.', 'ok');
+      els.epTitle.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    } catch (e) {
+      genLog('ERROR: ' + e.message, 'err');
+    } finally {
+      els.genBtn.disabled = false;
+      try { await audioCtx.close(); } catch (e) {}
+    }
+  }
+  els.genBtn.addEventListener('click', generateAudio);
+
+  async function publish() {
+    els.publishBtn.disabled = true;
+    els.successBox.classList.remove('show');
+    els.log.innerHTML = '';
+    saveConfig();
+
+    const owner = els.owner.value.trim(), repo = els.repo.value.trim();
+    const title = els.epTitle.value.trim();
+    const desc = els.epDesc.value.trim() || 'No description provided.';
+    const sourceUrl = els.epSourceUrl.value.trim();
+    const fullDesc = sourceUrl ? `${desc}\n\nSource: ${sourceUrl}` : desc;
+
+    try {
+      if (!selectedFile) throw new Error('No audio file selected.');
+      if (!els.token.value.trim()) throw new Error('No GitHub token set.');
+
+      log('Step 1/4 — reading audio file...', 'step');
+      const base64Audio = await fileToBase64(selectedFile);
+      const audioFilename = 'episode-' + Date.now() + '-' + slugify(title) + '.mp3';
+      const audioPath = 'audio/' + audioFilename;
+      log(`Read ${selectedFile.name} (${formatBytes(selectedFile.size)}).`, 'ok');
+
+      log('Step 2/4 — uploading audio to GitHub...', 'step');
+      await ghPutFile(audioPath, base64Audio, `Add episode audio: ${title}`);
+      log('Uploaded to ' + audioPath, 'ok');
+
+      log('Step 3/4 — updating feed.xml...', 'step');
+      const feedFile = await ghGetFile('feed.xml');
+      if (!feedFile) throw new Error('feed.xml not found in repo.');
+      const feedXmlText = base64ToUtf8(feedFile.content.replace(/\n/g, ''));
+
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(feedXmlText, 'application/xml');
+      const parseErr = doc.querySelector('parsererror');
+      if (parseErr) throw new Error('Could not parse existing feed.xml: ' + parseErr.textContent.slice(0,200));
+
+      const channel = doc.querySelector('channel');
+      if (!channel) throw new Error('feed.xml has no <channel> element.');
+
+      const NS_ITUNES = 'http://www.itunes.com/dtds/podcast-1.0.dtd';
+      const item = doc.createElement('item');
+      const titleEl = doc.createElement('title'); titleEl.textContent = title; item.appendChild(titleEl);
+      const descEl = doc.createElement('description'); descEl.textContent = fullDesc; item.appendChild(descEl);
+      const pubDateEl = doc.createElement('pubDate'); pubDateEl.textContent = rfc822822Now(); item.appendChild(pubDateEl);
+      const guidEl = doc.createElement('guid'); guidEl.setAttribute('isPermaLink', 'false');
+      guidEl.textContent = (self.crypto && crypto.randomUUID) ? crypto.randomUUID() : audioFilename;
+      item.appendChild(guidEl);
+
+      const audioUrl = `https://${owner}.github.io/${repo}/${audioPath}`;
+      const enclosureEl = doc.createElementNS(null, 'enclosure');
+      enclosureEl.setAttribute('url', audioUrl);
+      enclosureEl.setAttribute('length', String(selectedFile.size));
+      enclosureEl.setAttribute('type', 'audio/mpeg');
+      item.appendChild(enclosureEl);
+
+      const durationEl = doc.createElementNS(NS_ITUNES, 'itunes:duration');
+      durationEl.textContent = selectedDurationSec ? formatDuration(selectedDurationSec) : '0:00';
+      item.appendChild(durationEl);
+
+      const explicitEl = doc.createElementNS(NS_ITUNES, 'itunes:explicit');
+      explicitEl.textContent = 'false';
+      item.appendChild(explicitEl);
+
+      const firstItem = channel.querySelector('item');
+      if (firstItem) channel.insertBefore(item, firstItem); else channel.appendChild(item);
+
+      const newFeedXml = new XMLSerializer().serializeToString(doc);
+      const declaredXml = newFeedXml.startsWith('<?xml') ? newFeedXml : '<?xml version="1.0" encoding="UTF-8"?>\n' + newFeedXml;
+      await ghPutFile('feed.xml', utf8ToBase64(declaredXml), `Add episode: ${title}`, feedFile.sha);
+      log('feed.xml updated.', 'ok');
+
+      log('Step 4/4 — done.', 'step');
+      const feedUrl = `https://${owner}.github.io/${repo}/feed.xml`;
+      els.successBox.innerHTML = `<strong>Published!</strong> "${xmlEscape(title)}" is live.<br>
+        Audio: <a href="${audioUrl}" target="_blank" rel="noopener">${audioUrl}</a><br>
+        Feed: <a href="${feedUrl}" target="_blank" rel="noopener">${feedUrl}</a><br>
+        It may take a minute for GitHub Pages to catch up before your podcast app sees it.`;
+      els.successBox.classList.add('show');
+
+      selectedFile = null; selectedDurationSec = null;
+      els.fileChip.style.display = 'none'; els.dropzone.style.display = 'block'; els.audioFile.value = '';
+      els.epTitle.value = ''; els.epDesc.value = ''; els.epSourceUrl.value = '';
+      els.genTitle.value = ''; els.genDesc.value = ''; els.genSourceUrl.value = ''; els.scriptInput.value = '';
+      els.genPreview.style.display = 'none';
+      updateCharCount();
+    } catch (e) {
+      log('ERROR: ' + e.message, 'err');
+    } finally {
+      updatePublishEnabled();
+    }
+  }
+  els.publishBtn.addEventListener('click', publish);
+
   updateAddEnabled();
-  if (els.token.value) refreshQueue();
-  else setLoadStatus('err', 'Set your GitHub token below');
+  if (els.token.value) refreshQueue(); else setLoadStatus('err', 'Set your GitHub token below');
+  if (els.elKey.value) testElevenLabs();
 })();
 </script>
 </body>
