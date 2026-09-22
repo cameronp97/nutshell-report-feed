@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?><rss xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+<?xml version="1.0" encoding="UTF-8"?>
+<rss xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
   <channel>
     <title>The Nutshell Report</title>
     <link>https://cameronp97.github.io/nutshell-report-feed/</link>
@@ -14,9 +15,7 @@
     </itunes:owner>
     <itunes:image href="https://cameronp97.github.io/nutshell-report-feed/audio/cover.png"/>
     <!-- Episodes get added here, one <item> per episode, newest first -->
-    <item><title>How Threat Actors Are Using AI at Scale — What Anthropic Just Revealed</title><description>Anthropic's latest threat report shows how bad actors from nation-states to lone hackers are weaponizing Claude and other AI models. We break down the cyber operations, influence campaigns, and everything in between—plus what it means for your security posture.
-
-Source: https://www-cdn.anthropic.com/e50be2e51e7695dc4b1366a37a245a597377d3b5/Anthropic-Detecting-and-countering-091026.pdf</description><pubDate>Tue, 22 Sep 2026 13:48:56 GMT</pubDate><guid isPermaLink="false">251a5f0e-a815-4deb-a60a-45392f357497</guid><enclosure url="https://cameronp97.github.io/nutshell-report-feed/audio/episode-1790084916012-how-threat-actors-are-using-ai-at-scale-what-anthropic-just-.mp3" length="5497853" type="audio/mpeg"/><itunes:duration>5:44</itunes:duration><itunes:explicit>false</itunes:explicit></item><item><title>AI Went Bad (And Anthropic Caught Them)</title><description>Anthropic's Threat Intelligence team disrupted operations where hackers, spies, and propagandists used Claude to conduct cyber attacks, run influence campaigns, and commit fraud—often in ways that made individual operators as dangerous as nation-states. We break down the real cases from Russian espionage to election manipulation to "AI-powered fake news factories."
+    <item><title>AI Went Bad (And Anthropic Caught Them)</title><description>Anthropic's Threat Intelligence team disrupted operations where hackers, spies, and propagandists used Claude to conduct cyber attacks, run influence campaigns, and commit fraudâoften in ways that made individual operators as dangerous as nation-states. We break down the real cases from Russian espionage to election manipulation to "AI-powered fake news factories."
 
 Source: https://www-cdn.anthropic.com/e50be2e51e7695dc4b1366a37a245a597377d3b5/Anthropic-Detecting-and-countering-091026.pdf</description><pubDate>Sat, 12 Sep 2026 11:09:25 GMT</pubDate><guid isPermaLink="false">5c06a539-bda6-4eca-911f-ffbff15b8efd</guid><enclosure url="https://cameronp97.github.io/nutshell-report-feed/audio/episode-1789211361720-ai-went-bad-and-anthropic-caught-them.mp3" length="7896390" type="audio/mpeg"/><itunes:duration>8:13</itunes:duration><itunes:explicit>false</itunes:explicit></item><item><title>Stanford:  how AI is reshaping the future of work</title><description>From Stanford</description><pubDate>Tue, 08 Sep 2026 00:43:02 GMT</pubDate><guid isPermaLink="false">c013b9e2-264a-444d-8cd9-5ba3a1f24ff8</guid><enclosure url="https://cameronp97.github.io/nutshell-report-feed/audio/episode-1788828179848-stanford-how-ai-is-reshaping-the-future-of-work.mp3" length="5143778" type="audio/mpeg"/><itunes:duration>5:21</itunes:duration><itunes:explicit>false</itunes:explicit></item><item>
       <title>Pressure Washing: Finding Vulnerabilities with LLMs</title>
